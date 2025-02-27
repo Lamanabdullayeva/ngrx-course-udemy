@@ -9,7 +9,7 @@ import { tap } from "rxjs/operators";
 import { AuthService } from "../auth.service";
 import { login } from "../auth.actions";
 import { AuthActions } from "../action-types";
-import { AuthState } from "../reducers";
+import { AppState } from "../reducers";
 
 @Component({
   selector: "login",
@@ -24,7 +24,7 @@ export class LoginComponent implements OnInit {
     private fb: FormBuilder,
     private auth: AuthService,
     private router: Router,
-    private store: Store<AuthState>
+    private store: Store<AppState>
   ) {
     this.form = fb.group({
       email: ["test@angular-university.io", [Validators.required]],

@@ -11,11 +11,11 @@ import {
 import { User } from "../model/user.model";
 import { AuthActions } from "../action-types";
 
-export interface AuthState {
+export interface AppState {
   user: User;
 }
 
-export const initialAuthState: AuthState = {
+export const initialAuthState: AppState = {
   user: undefined,
 };
 
@@ -24,6 +24,11 @@ export const authReducer = createReducer(
   on(AuthActions.login, (state, action) => {
     return {
       user: action.user,
+    };
+  }),
+  on(AuthActions.logout, (state, action) => {
+    return {
+      user: undefined,
     };
   })
 );
