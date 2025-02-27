@@ -25,12 +25,14 @@ import { EffectsModule } from "@ngrx/effects";
 import { EntityDataModule } from "@ngrx/data";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { authReducer } from "./auth/reducers";
+import { AuthGuard } from "./auth/auth.guard";
 
 const routes: Routes = [
   {
     path: "courses",
     loadChildren: () =>
       import("./courses/courses.module").then((m) => m.CoursesModule),
+    canActivate: [AuthGuard],
   },
   {
     path: "**",
@@ -57,6 +59,7 @@ const routes: Routes = [
       maxAge: 25,
       logOnly: environment.production,
     }),
+    EffectsModule.forRoot([]),
   ],
   providers: [provideHttpClient(withInterceptorsFromDi())],
 })
