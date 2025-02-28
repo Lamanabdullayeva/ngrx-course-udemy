@@ -9,7 +9,7 @@ import { tap } from "rxjs/operators";
 import { AuthService } from "../auth.service";
 import { login } from "../auth.actions";
 import { AuthActions } from "../action-types";
-import { AppState } from "../reducers";
+import { AppState } from "../../reducers";
 
 @Component({
   selector: "login",

@@ -9,9 +9,9 @@ import {
   NavigationStart,
   Router,
 } from "@angular/router";
-import { AppState } from "./auth/reducers";
 import { isLoggedIn, isLoggedOut } from "./auth/auth.selectors";
 import { login, logout } from "./auth/auth.actions";
+import { AuthState } from "./auth/reducers";
 
 @Component({
   selector: "app-root",
@@ -26,10 +26,11 @@ export class AppComponent implements OnInit {
 
   isLoggedOut$: Observable<boolean>;
 
-  constructor(private router: Router, private store: Store<AppState>) {}
+  constructor(private router: Router, private store: Store<AuthState>) {}
 
   ngOnInit() {
     const userProfile = localStorage.getItem("user");
+
     if (userProfile) {
       this.store.dispatch(login({ user: JSON.parse(userProfile) }));
     }

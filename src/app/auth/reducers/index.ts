@@ -10,12 +10,13 @@ import {
 } from "@ngrx/store";
 import { User } from "../model/user.model";
 import { AuthActions } from "../action-types";
+import { routerReducer } from "@ngrx/router-store";
 
-export interface AppState {
+export interface AuthState {
   user: User;
 }
 
-export const initialAuthState: AppState = {
+export const initialAuthState: AuthState = {
   user: undefined,
 };
 
