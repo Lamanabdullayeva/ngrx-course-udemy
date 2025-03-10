@@ -1,18 +1,16 @@
 import { Component, OnInit } from "@angular/core";
-import { compareCourses, Course } from "../model/course";
-import { Observable } from "rxjs";
-import { defaultDialogConfig } from "../shared/default-dialog-config";
-import { EditCourseDialogComponent } from "../edit-course-dialog/edit-course-dialog.component";
 import { MatDialog } from "@angular/material/dialog";
-import { map, shareReplay } from "rxjs/operators";
-import { CoursesHttpService } from "../services/courses-http.service";
-import { AppState } from "../../reducers";
 import { select, Store } from "@ngrx/store";
+import { Observable } from "rxjs";
+import { AppState } from "../../reducers";
 import {
   selectAdvancedCourses,
   selectBeginnerCourses,
   selectPromoTotal,
 } from "../courses.selectors";
+import { EditCourseDialogComponent } from "../edit-course-dialog/edit-course-dialog.component";
+import { Course } from "../model/course";
+import { defaultDialogConfig } from "../shared/default-dialog-config";
 
 @Component({
   selector: "home",
