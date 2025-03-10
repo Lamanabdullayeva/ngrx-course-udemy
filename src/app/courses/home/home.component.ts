@@ -6,6 +6,13 @@ import { EditCourseDialogComponent } from "../edit-course-dialog/edit-course-dia
 import { MatDialog } from "@angular/material/dialog";
 import { map, shareReplay } from "rxjs/operators";
 import { CoursesHttpService } from "../services/courses-http.service";
+import { AppState } from "../../reducers";
+import { select, Store } from "@ngrx/store";
+import {
+  selectAdvancedCourses,
+  selectBeginnerCourses,
+  selectPromoTotal,
+} from "../courses.selectors";
 
 @Component({
   selector: "home",
@@ -22,38 +29,18 @@ export class HomeComponent implements OnInit {
 
   advancedCourses$: Observable<Course[]>;
 
-  constructor(
-    private dialog: MatDialog,
-    private coursesHttpService: CoursesHttpService
-  ) {}
+  constructor(private dialog: MatDialog, private store: Store<AppState>) {}
 
   ngOnInit() {
     this.reload();
   }
 
   reload() {
-    const courses$ = this.coursesHttpService.findAllCourses().pipe(
-      map((courses) => courses.sort(compareCourses)),
-      shareReplay()
-    );
+    this.beginnerCourses$ = this.store.pipe(select(selectBeginnerCourses));
 
-    this.loading$ = courses$.pipe(map((courses) => !!courses));
+    this.advancedCourses$ = this.store.pipe(select(selectAdvancedCourses));
 
-    this.beginnerCourses$ = courses$.pipe(
-      map((courses) =>
-        courses.filter((course) => course.category == "BEGINNER")
-      )
-    );
-
-    this.advancedCourses$ = courses$.pipe(
-      map((courses) =>
-        courses.filter((course) => course.category == "ADVANCED")
-      )
-    );
-
-    this.promoTotal$ = courses$.pipe(
-      map((courses) => courses.filter((course) => course.promo).length)
-    );
+    this.promoTotal$ = this.store.pipe(select(selectPromoTotal));
   }
 
   onAddCourse() {
