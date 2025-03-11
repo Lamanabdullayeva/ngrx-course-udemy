@@ -29,25 +29,32 @@ import {
 import { compareCourses, Course } from "./model/course";
 
 import { compareLessons, Lesson } from "./model/lesson";
-import { CourseResolver } from "./course.resolver";
-import { EffectsModule } from "@ngrx/effects";
-import { CoursesEffects } from "./courses.effects";
-import { StoreModule } from "@ngrx/store";
-import { coursesReducer } from "./reducers/course.reducers";
+import { CourseEntityService } from "./services/course-entity.service";
+import { CoursesResolver } from "./services/courses.resolver";
+import { CourseDataService } from "./services/courses-data.service";
 
 export const coursesRoutes: Routes = [
   {
     path: "",
     component: HomeComponent,
     resolve: {
-      courses: CourseResolver,
+      courses: CoursesResolver,
     },
   },
   {
     path: ":courseUrl",
     component: CourseComponent,
+    resolve: {
+      courses: CoursesResolver,
+    },
   },
 ];
+
+const entityMetadata: EntityMetadataMap = {
+  Course: {
+    sortComparer: compareCourses,
+  },
+};
 
 @NgModule({
   imports: [
@@ -68,8 +75,6 @@ export const coursesRoutes: Routes = [
     MatMomentDateModule,
     ReactiveFormsModule,
     RouterModule.forChild(coursesRoutes),
-    EffectsModule.forFeature([CoursesEffects]),
-    StoreModule.forFeature("courses", coursesReducer),
   ],
   declarations: [
     HomeComponent,
@@ -83,8 +88,21 @@ export const coursesRoutes: Routes = [
     EditCourseDialogComponent,
     CourseComponent,
   ],
-  providers: [CoursesHttpService, CourseResolver],
+  entryComponents: [EditCourseDialogComponent],
+  providers: [
+    CoursesHttpService,
+    CourseEntityService,
+    CoursesResolver,
+    CourseDataService,
+  ],
 })
 export class CoursesModule {
-  constructor() {}
+  constructor(
+    private eds: EntityDefinitionService,
+    private entityDataService: EntityDataService,
+    private coursesDataService: CourseDataService
+  ) {
+    eds.registerMetadataMap(entityMetadata);
+    entityDataService.registerService("Course", coursesDataService);
+  }
 }

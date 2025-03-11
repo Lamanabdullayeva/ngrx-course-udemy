@@ -1,5 +1,5 @@
 import { BrowserModule } from "@angular/platform-browser";
-import { NgModule, isDevMode } from "@angular/core";
+import { NgModule } from "@angular/core";
 
 import { AppComponent } from "./app.component";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
@@ -9,10 +9,7 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatListModule } from "@angular/material/list";
 import { MatSidenavModule } from "@angular/material/sidenav";
 import { MatToolbarModule } from "@angular/material/toolbar";
-import {
-  provideHttpClient,
-  withInterceptorsFromDi,
-} from "@angular/common/http";
+import { HttpClientModule } from "@angular/common/http";
 
 import { RouterModule, Routes } from "@angular/router";
 import { AuthModule } from "./auth/auth.module";
@@ -22,11 +19,10 @@ import { environment } from "../environments/environment";
 import { RouterState, StoreRouterConnectingModule } from "@ngrx/router-store";
 
 import { EffectsModule } from "@ngrx/effects";
-import { EntityDataModule } from "@ngrx/data";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
-import { authReducer } from "./auth/reducers";
-import { AuthGuard } from "./auth/auth.guard";
 import { metaReducers, reducers } from "./reducers";
+import { AuthGuard } from "./auth/auth.guard";
+import { EntityDataModule } from "@ngrx/data";
 
 const routes: Routes = [
   {
@@ -43,11 +39,11 @@ const routes: Routes = [
 
 @NgModule({
   declarations: [AppComponent],
-  bootstrap: [AppComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-    RouterModule.forRoot(routes),
+    RouterModule.forRoot(routes, { relativeLinkResolution: "legacy" }),
+    HttpClientModule,
     MatMenuModule,
     MatIconModule,
     MatSidenavModule,
@@ -69,8 +65,12 @@ const routes: Routes = [
       logOnly: environment.production,
     }),
     EffectsModule.forRoot([]),
-    StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: !isDevMode() }),
+    EntityDataModule.forRoot({}),
+    StoreRouterConnectingModule.forRoot({
+      stateKey: "router",
+      routerState: RouterState.Minimal,
+    }),
   ],
-  providers: [provideHttpClient(withInterceptorsFromDi())],
+  bootstrap: [AppComponent],
 })
 export class AppModule {}

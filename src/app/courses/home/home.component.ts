@@ -1,22 +1,17 @@
 import { Component, OnInit } from "@angular/core";
-import { MatDialog } from "@angular/material/dialog";
-import { select, Store } from "@ngrx/store";
+import { compareCourses, Course } from "../model/course";
 import { Observable } from "rxjs";
-import { AppState } from "../../reducers";
-import {
-  selectAdvancedCourses,
-  selectBeginnerCourses,
-  selectPromoTotal,
-} from "../courses.selectors";
-import { EditCourseDialogComponent } from "../edit-course-dialog/edit-course-dialog.component";
-import { Course } from "../model/course";
 import { defaultDialogConfig } from "../shared/default-dialog-config";
+import { EditCourseDialogComponent } from "../edit-course-dialog/edit-course-dialog.component";
+import { MatDialog } from "@angular/material/dialog";
+import { map, shareReplay } from "rxjs/operators";
+import { CoursesHttpService } from "../services/courses-http.service";
+import { CourseEntityService } from "../services/course-entity.service";
 
 @Component({
   selector: "home",
   templateUrl: "./home.component.html",
   styleUrls: ["./home.component.css"],
-  standalone: false,
 })
 export class HomeComponent implements OnInit {
   promoTotal$: Observable<number>;
@@ -25,18 +20,31 @@ export class HomeComponent implements OnInit {
 
   advancedCourses$: Observable<Course[]>;
 
-  constructor(private dialog: MatDialog, private store: Store<AppState>) {}
+  constructor(
+    private dialog: MatDialog,
+    private coursesService: CourseEntityService
+  ) {}
 
   ngOnInit() {
     this.reload();
   }
 
   reload() {
-    this.beginnerCourses$ = this.store.pipe(select(selectBeginnerCourses));
+    this.beginnerCourses$ = this.coursesService.entities$.pipe(
+      map((courses) =>
+        courses.filter((course) => course.category == "BEGINNER")
+      )
+    );
 
-    this.advancedCourses$ = this.store.pipe(select(selectAdvancedCourses));
+    this.advancedCourses$ = this.coursesService.entities$.pipe(
+      map((courses) =>
+        courses.filter((course) => course.category == "ADVANCED")
+      )
+    );
 
-    this.promoTotal$ = this.store.pipe(select(selectPromoTotal));
+    this.promoTotal$ = this.coursesService.entities$.pipe(
+      map((courses) => courses.filter((course) => course.promo).length)
+    );
   }
 
   onAddCourse() {
